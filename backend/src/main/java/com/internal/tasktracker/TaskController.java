@@ -28,8 +28,16 @@ public class TaskController {
 
         // Parse status filter
         String normalizedStatus = null;
-        if (status != null && !status.isEmpty()) {
-            normalizedStatus = TaskStatus.valueOf(status.toUpperCase()).name();
+       if (status != null && !status.isEmpty()) {
+            try {
+                normalizedStatus = TaskStatus.valueOf(status.toUpperCase()).name();
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid status value"));
+            }
+        }
+
+        if (page < 1 || pageSize < 1) {
+            return ResponseEntity.badRequest().body(Map.of("error", "page and pageSize must be at least 1"));
         }
 
         // // Query complexity estimation for logging
